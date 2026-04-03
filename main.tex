@@ -1,0 +1,425 @@
+\documentclass[12pt,a4paper]{ctexart}
+
+% ==================== 页面与基础设置 ====================
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{indentfirst}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+
+\setlength{\parindent}{2em}
+\setlength{\headheight}{15pt}
+\onehalfspacing
+
+% ==================== 数学与定理 ====================
+\usepackage{amsmath,amssymb,amsthm,bm}
+\numberwithin{equation}{section}
+
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{remark}[theorem]{注}
+
+% ==================== 图片、表格、算法 ====================
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{mwe}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\captionsetup{font=small,labelfont=bf}
+
+% ==================== 超链接 ====================
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+% ==================== 页眉页脚 ====================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{论文标题示例}
+\fancyfoot[C]{\thepage}
+
+% ==================== 自定义命令 ====================
+\newcommand{\keywords}[1]{\par\noindent\textbf{关键词：} #1}
+\newcommand{\engkeywords}[1]{\par\noindent\textbf{Keywords:} #1}
+
+% ==================== 标题信息 ====================
+\title{\heiti 论文标题示例：一种面向学术写作的规范化论文模板}
+\author{作者姓名\\[0.5em]
+\small 某某大学~~某某学院}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+% ==================== 中文摘要 ====================
+\begin{abstract}
+随着科研写作与学术交流需求的不断增长，规范、清晰且易于维护的论文排版模板对于提升写作效率和论文质量具有重要意义。针对初学者在论文写作中经常面临的结构混乱、公式排版不规范、图表引用不统一以及参考文献组织困难等问题，本文设计并实现了一套适用于中文学术论文写作的 \LaTeX{} 模板。该模板在整体结构上覆盖摘要、引言、相关工作、方法设计、理论分析、实验结果、结论与参考文献等核心组成部分，并对数学公式、定理环境、算法描述、表格与图片插入等常见写作场景进行了统一封装。实验性使用结果表明，该模板能够有效降低论文初稿阶段的格式调整成本，提高文档的一致性与可维护性。本文的模板尤其适用于计算机科学、信息安全、密码学及其他理工科方向的课程论文、学术报告与毕业论文写作。
+\end{abstract}
+
+\keywords{\LaTeX{}；学术论文；排版模板；Overleaf；科研写作}
+
+% ==================== 英文摘要 ====================
+\vspace{1.5em}
+\begin{center}
+    {\bfseries\large Abstract}
+\end{center}
+With the increasing demand for academic writing and scholarly communication, a standardized, clear, and maintainable manuscript template plays an important role in improving both writing efficiency and paper quality. To address common issues faced by beginners, such as disorganized structure, inconsistent equation formatting, irregular figure and table references, and difficulties in bibliography management, this paper presents a \LaTeX{} template designed for Chinese academic writing. The template covers essential components of a formal paper, including abstract, introduction, related work, methodology, theoretical analysis, experimental results, conclusion, and references. It also provides unified support for common writing scenarios such as mathematical equations, theorem environments, algorithm descriptions, table formatting, and figure insertion. Experimental use shows that the template can significantly reduce formatting overhead during early drafting and improve consistency and maintainability. It is particularly suitable for course papers, technical reports, and thesis writing in computer science, information security, cryptography, and other engineering-related disciplines.
+
+\engkeywords{\LaTeX{}, academic writing, manuscript template, Overleaf, research paper}
+
+\tableofcontents
+\newpage
+
+% ==================== 正文 ====================
+\section{引言}
+学术论文不仅是研究成果的载体，也是研究思路、技术路线与实验结论的系统表达形式。一篇高质量论文通常需要在内容完整性、逻辑严谨性与版面规范性三个层面同时达到较高标准。然而，对于初次接触学术写作的学生而言，排版往往会成为影响写作效率的重要因素。例如，公式编号不连续、图表样式不统一、章节层次不清晰、参考文献格式混乱等问题，在传统文字处理软件中较为常见。
+
+相比之下，\LaTeX{} 具有公式排版能力强、文档结构清晰、交叉引用方便以及参考文献管理规范等优势，因此在计算机科学、数学、物理学、信息安全与密码学等领域得到了广泛应用。特别是在多人协作与长期维护场景下，基于 Overleaf 的在线协同写作方式进一步降低了环境配置门槛，使得研究者能够将更多精力放在内容本身而非格式调整之上。
+
+本文围绕“如何构建一套适合中文科研写作的通用论文模板”这一问题展开，主要贡献如下：
+\begin{itemize}[leftmargin=2em]
+    \item 提供一套结构完整、可直接编译的中文论文模板；
+    \item 统一数学公式、定理环境、算法、图表和参考文献的书写方式；
+    \item 给出一个适用于课程论文、综述、技术报告和毕业论文初稿的通用框架。
+\end{itemize}
+
+\section{相关工作}
+现有的学术写作模板大致可以分为三类。第一类是高校官方模板，通常面向学位论文写作，强调格式规范性与提交一致性；第二类是期刊或会议模板，主要服务于论文投稿，关注版面风格与审稿要求；第三类是个人或课题组维护的通用模板，兼顾灵活性与复用性。
+
+从写作工具角度来看，传统文字处理软件具有上手快、操作直观等优点，适合轻量级文档写作；而 \LaTeX{} 在结构化写作、数学公式排版、交叉引用与参考文献管理方面优势明显，因而更适合技术性较强的学术文档。在实际使用中，Overleaf 作为在线 \LaTeX{} 平台，进一步提升了跨设备访问、版本管理和多人协作的便利性。
+
+尽管已有模板资源较多，但不少模板存在以下不足：一是结构不完整，仅提供最基础的章节框架；二是缺乏中文环境下的细节优化；三是示例不足，初学者难以快速迁移到自己的研究内容中。因此，构建一套兼顾规范性、易用性与扩展性的模板仍具有现实意义。
+
+\section{问题定义与预备知识}
+\subsection{论文模板的设计目标}
+一个高质量论文模板应至少满足以下要求：
+\begin{enumerate}[leftmargin=2em]
+    \item \textbf{结构完整性}：覆盖摘要、正文、参考文献等核心模块；
+    \item \textbf{排版规范性}：公式、图表、标题和编号风格统一；
+    \item \textbf{可扩展性}：能够根据具体研究方向快速增删模块；
+    \item \textbf{可维护性}：适合长期迭代与多人协作。
+\end{enumerate}
+
+\subsection{数学环境示例}
+在计算机类论文中，数学表达通常不仅用于说明单个函数关系，还承担数据建模、目标定义与优化求解的作用。设训练样本集合为
+\begin{equation}
+    \mathcal{D}=\{(\bm{x}_i,y_i)\}_{i=1}^{n}, \qquad \bm{x}_i\in\mathbb{R}^{d},\ y_i\in\{1,\dots,C\},
+\end{equation}
+其中 $\bm{x}_i$ 表示第 $i$ 个样本的特征向量，$y_i$ 表示其类别标签。将全部样本按行堆叠，可得到批量输入矩阵
+\begin{equation}
+    \bm{X}=
+    \begin{bmatrix}
+        \bm{x}_1^{\top}\\
+        \bm{x}_2^{\top}\\
+        \vdots\\
+        \bm{x}_n^{\top}
+    \end{bmatrix}
+    \in\mathbb{R}^{n\times d}.
+\end{equation}
+
+若记参数集合为 $\theta=\{\bm{W},\bm{b}\}$，则模型预测可写为
+\begin{align}
+    \hat{y}_i &= f_{\theta}(\bm{x}_i), \\
+    \bm{z}_i &= \bm{W}\bm{x}_i+\bm{b}, \\
+    p(y_i=c\mid \bm{x}_i;\theta) &= \frac{\exp(z_{i,c})}{\sum_{j=1}^{C}\exp(z_{i,j})}.
+\end{align}
+上式给出了从线性变换到类别概率输出的基本形式，也是许多分类模型的标准写法。
+
+在此基础上，可进一步将论文中的优化目标写成经验风险最小化问题：
+\begin{equation}
+    \min_{\theta}\ \mathcal{L}(\theta)
+    =
+    \frac{1}{n}\sum_{i=1}^{n}\ell\!\left(f_{\theta}(\bm{x}_i),y_i\right)
+    + \lambda \Omega(\theta),
+\end{equation}
+其中 $\ell(\cdot,\cdot)$ 为样本损失函数，$\Omega(\theta)$ 为正则项，$\lambda\ge 0$ 为正则化系数。常见的正则项可写为
+\begin{equation}
+    \Omega(\theta)=\frac{1}{2}\|\bm{W}\|_F^2+\gamma\|\bm{b}\|_2^2.
+\end{equation}
+若进一步考虑参数规模与稳定性约束，还可写成如下受约束优化形式：
+\begin{equation}
+    \begin{aligned}
+        \min_{\theta}\quad & \mathcal{L}(\theta) \\
+        \text{s.t.}\quad & \|\bm{W}\|_{2,1}\le \tau,\qquad
+        \|\bm{b}\|_2\le \rho.
+    \end{aligned}
+\end{equation}
+该类公式既能体现模型表达能力，也能展示论文在符号系统、约束条件与多行公式排版方面的规范性。
+
+\subsection{定理环境示例}
+\begin{definition}
+设 $\mathcal{X}$ 为一个非空集合，若映射 $d:\mathcal{X}\times\mathcal{X}\to\mathbb{R}$ 满足非负性、对称性与三角不等式，则称 $d$ 为集合 $\mathcal{X}$ 上的一个距离函数。
+\end{definition}
+
+\begin{theorem}
+若函数 $f(x)$ 在闭区间 $[a,b]$ 上连续，则 $f(x)$ 在该区间上一定存在最大值和最小值。
+\end{theorem}
+
+\begin{proof}
+该结论是实变函数中的经典结果，可由闭区间套性质与连续函数在紧集上的有界性直接推出。
+\end{proof}
+
+\section{方法设计}
+\subsection{总体思路}
+本文模板采用“结构先行、内容后填”的设计思路。首先定义统一的文档类、页面布局与基础宏包；其次针对数学公式、图表、算法和参考文献设计规范化写法；最后通过示例章节展示其在实际论文中的应用方式。
+
+若从计算机类论文的表述方式出发，可将模板支持的“方法描述”抽象为“输入表示 $\rightarrow$ 中间表征 $\rightarrow$ 输出决策 $\rightarrow$ 参数更新”的标准链条。设输入特征矩阵为 $\bm{X}\in\mathbb{R}^{n\times d}$，则隐藏层表示可定义为
+\begin{equation}
+    \bm{H}=\sigma(\bm{X}\bm{W}_1+\bm{1}\bm{b}_1^{\top}),
+\end{equation}
+其中 $\bm{W}_1\in\mathbb{R}^{d\times h}$，$\bm{b}_1\in\mathbb{R}^{h}$，$\sigma(\cdot)$ 表示逐元素非线性激活函数。进一步地，输出层可写为
+\begin{align}
+    \bm{O} &= \bm{H}\bm{W}_2+\bm{1}\bm{b}_2^{\top}, \\
+    \hat{\bm{Y}} &= \mathrm{softmax}(\bm{O}),
+\end{align}
+其中 $\hat{\bm{Y}}\in\mathbb{R}^{n\times C}$ 表示对各类别的预测概率矩阵。这样一组公式能够帮助作者将“方法设计”写得更接近标准的计算机学术论文风格。
+
+\subsection{目标函数与参数更新}
+在方法实现层面，通常需要将结构表示、损失函数和优化过程串联起来。对于一个包含 $n$ 个样本的训练批次，交叉熵目标可写为
+\begin{equation}
+    \mathcal{L}_{\mathrm{ce}}(\theta)
+    =
+    -\frac{1}{n}\sum_{i=1}^{n}\sum_{c=1}^{C}
+    y_{i,c}\log \hat{y}_{i,c},
+\end{equation}
+若再叠加权重衰减与结构约束，则总目标函数可写为
+\begin{equation}
+    \mathcal{L}(\theta)
+    =
+    \mathcal{L}_{\mathrm{ce}}(\theta)
+    + \lambda\|\bm{W}_1\|_F^2
+    + \mu\|\bm{W}_2\|_F^2.
+\end{equation}
+为体现更完整的优化描述，还可引入拉格朗日函数
+\begin{equation}
+    \mathcal{J}(\theta,\alpha,\beta)
+    =
+    \mathcal{L}(\theta)
+    + \alpha\bigl(\|\bm{W}_1\|_F^2-\tau_1\bigr)
+    + \beta\bigl(\|\bm{W}_2\|_F^2-\tau_2\bigr),
+\end{equation}
+其中 $\alpha,\beta\ge 0$ 为拉格朗日乘子。相应地，参数更新可以写为
+\begin{equation}
+    \theta^{(t+1)}
+    =
+    \theta^{(t)}
+    -
+    \eta_t \nabla_{\theta}\mathcal{L}\!\left(\theta^{(t)}\right),
+\end{equation}
+若采用小批量随机梯度下降，则进一步可写为
+\begin{equation}
+    \nabla_{\theta}\mathcal{L}(\theta)
+    \approx
+    \frac{1}{|\mathcal{B}_t|}
+    \sum_{(\bm{x}_i,y_i)\in\mathcal{B}_t}
+    \nabla_{\theta}\ell\!\left(f_{\theta}(\bm{x}_i),y_i\right).
+\end{equation}
+上述表达能够让模板中的方法章节同时覆盖符号定义、目标构建与求解流程，避免“只有算法框图、缺少数学主线”的问题。
+
+\subsection{论文写作流程}
+在实际使用中，推荐采用如下工作流程：
+\begin{enumerate}[leftmargin=2em]
+    \item 明确论文主题与章节结构；
+    \item 根据研究内容填写摘要、引言与相关工作；
+    \item 补充方法、理论分析与实验结果；
+    \item 统一调整图表编号、交叉引用与参考文献；
+    \item 最后根据学校或投稿模板进行格式微调。
+\end{enumerate}
+
+\subsection{算法描述示例}
+下面给出一个简单的论文写作流程算法示例。
+\begin{algorithm}[H]
+\caption{学术论文写作流程}
+\begin{algorithmic}[1]
+\Require 研究主题 $T$，实验数据集 $D$
+\Ensure 完整论文文稿 $P$
+\State 确定研究问题、目标与贡献点
+\State 收集并整理相关工作
+\State 设计方法并完成理论分析
+\State 基于数据集 $D$ 开展实验并记录结果
+\State 撰写摘要、正文与结论
+\State 检查格式、语言和参考文献一致性
+\State 输出完整文稿 $P$
+\end{algorithmic}
+\end{algorithm}
+
+\section{理论分析}
+从文档工程的角度来看，模板化写作的核心价值在于降低格式维护成本，并使写作过程更接近“可优化系统”。设论文写作总工作量为
+\begin{equation}
+    W = W_c + W_f + W_v,
+\end{equation}
+其中 $W_c$ 表示内容撰写成本，$W_f$ 表示格式调整成本，$W_v$ 表示协作版本冲突成本。若进一步将影响因素细化为文档长度 $L$、公式数量 $m$、协作者人数 $r$ 与版本冲突率 $\xi$，则可写为
+\begin{equation}
+    W_f = \alpha_1 L + \alpha_2 m + \alpha_3 Lm,\qquad
+    W_v = \beta_1(r-1)+\beta_2 \xi L.
+\end{equation}
+其中交叉项 $\alpha_3Lm$ 刻画了“长文档中复杂公式越多，人工排版代价越高”的现象。模板化写作的收益则可定义为
+\begin{equation}
+    U = \omega_1 \Delta C + \omega_2 \Delta R + \omega_3 \Delta M,
+\end{equation}
+其中 $\Delta C,\Delta R,\Delta M$ 分别表示结构一致性、可读性与可维护性的提升幅度，$\omega_1,\omega_2,\omega_3$ 为对应权重。
+
+据此，总体写作效率可重写为
+\begin{equation}
+    \eta = \frac{W_c + U}{W_c + W_f + W_v},
+\end{equation}
+当 $U$ 足够大且 $W_f,W_v$ 被模板有效压缩时，系统效率将获得更明显的提升。若记模板化前后的格式成本分别为 $W_f^{(0)}$ 与 $W_f^{(1)}$，则其相对改进率为
+\begin{equation}
+    \rho_f = \frac{W_f^{(0)}-W_f^{(1)}}{W_f^{(0)}}.
+\end{equation}
+
+进一步地，还可以从算法复杂度角度分析模板写作系统的维护成本。设文档中共有 $n$ 个章节单元、$m$ 个公式环境、$k$ 个交叉引用以及 $e$ 次编辑迭代，则自动编号、引用更新与结构检查的总体时间复杂度可近似表示为
+\begin{equation}
+    T(n,m,k,e)=O\bigl(n+m+k+e(m+k)\bigr),
+\end{equation}
+相应的辅助状态存储空间可写为
+\begin{equation}
+    S(n,m,k)=O(n+m+k).
+\end{equation}
+这说明模板系统在文档规模扩展时仍具有较好的可管理性。
+
+若考虑迭代修订过程中格式误差的收敛行为，记第 $t$ 轮修订后的规范性偏差为 $\varepsilon_t$，则在统一模板约束下可假设
+\begin{equation}
+    \varepsilon_{t+1}\le (1-\delta)\varepsilon_t + \zeta_t,\qquad 0<\delta<1,
+\end{equation}
+其中 $\delta$ 表示模板对格式误差的抑制系数，$\zeta_t$ 表示新增内容带来的扰动项。若满足 $\zeta_t\le \bar{\zeta}$，则有上界
+\begin{equation}
+    \varepsilon_t
+    \le
+    (1-\delta)^t\varepsilon_0
+    + \frac{\bar{\zeta}}{\delta}\bigl(1-(1-\delta)^t\bigr).
+\end{equation}
+该式表明，只要模板规则稳定且新增扰动有界，文档格式偏差将逐步收敛到一个较小区间，这也是模板化写作能够长期降低维护成本的重要原因。
+
+\section{实验与结果}
+\subsection{实验设置}
+为了验证模板的可用性，本文从结构完整性、排版规范性、可读性与可维护性四个维度进行观察性评价。实验环境采用 Overleaf 在线编译平台与本地 \LaTeX{} 编辑器相结合的方式，重点考察以下问题：
+\begin{itemize}[leftmargin=2em]
+    \item 是否能够稳定支持中文排版；
+    \item 是否便于公式、图表和算法的统一管理；
+    \item 是否适合多人协作与后期内容迭代。
+\end{itemize}
+
+为使实验评价更具“计算机论文”风格，可进一步定义多指标评分向量
+\begin{equation}
+    \bm{s}=
+    \bigl[s_{\mathrm{str}},\ s_{\mathrm{fmt}},\ s_{\mathrm{read}},\ s_{\mathrm{maint}}\bigr]^{\top},
+\end{equation}
+其中四个分量分别表示结构完整性、格式一致性、可读性和可维护性得分。综合评分函数定义为
+\begin{equation}
+    Q = \bm{w}^{\top}\bm{s}
+    = \sum_{j=1}^{4} w_j s_j,\qquad
+    \sum_{j=1}^{4} w_j = 1,\ w_j\ge 0.
+\end{equation}
+若进一步对不同工具在多个任务上的表现进行归一化，可写为
+\begin{equation}
+    \tilde{s}_{i,j}
+    =
+    \frac{s_{i,j}-\min\limits_{1\le p\le M}s_{p,j}}
+         {\max\limits_{1\le p\le M}s_{p,j}-\min\limits_{1\le p\le M}s_{p,j}+\epsilon},
+\end{equation}
+其中 $M$ 表示候选写作方案数，$\epsilon>0$ 用于避免分母为零。通过这些公式，实验部分便不再只是文字描述，而是具有了清晰的指标定义与评价框架。
+
+\subsection{表格示例}
+表~\ref{tab:comparison} 给出了不同写作方式在若干指标上的对比示例。
+\begin{table}[H]
+    \centering
+    \caption{不同写作方式对比示例}
+    \label{tab:comparison}
+    \begin{tabular}{cccc}
+        \toprule
+        写作方式 & 公式支持 & 协同能力 & 格式一致性\\
+        \midrule
+        传统文字处理软件 & 一般 & 较强 & 一般\\
+        本地 \LaTeX{} & 很强 & 一般 & 很强 \\
+        Overleaf + \LaTeX{} & 很强 & 很强 & 很强 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+从表中可以看出，基于 \LaTeX{} 的写作方式在公式排版与格式一致性方面具有明显优势；而 Overleaf 在此基础上进一步增强了协同写作能力，更适合课程论文、小组项目与研究生阶段的长期文档维护。
+
+\subsection{图片示例}
+图~\ref{fig:framework} 展示了模板化论文写作的一般流程框架。
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{example-image}
+    \caption{模板化论文写作流程示意图}
+    \label{fig:framework}
+\end{figure}
+
+结合图~\ref{fig:framework} 可知，一个规范模板不仅能够作为排版工具，也能够在一定程度上起到“写作路线图”的作用。作者可以围绕既定章节依次填充内容，从而降低空白文档带来的写作压力。
+
+\subsection{结果分析}
+综合实验观察结果，本文模板在以下三个方面表现较好：
+
+第一，文档结构完整，能够满足多数课程论文和技术报告的基本需求。
+
+第二，数学公式、图表、算法与定理环境均已统一配置，适合技术性较强的写作任务。
+
+第三，模板具有较好的可扩展性，用户可以根据具体研究方向进一步增加章节，如“安全性分析”“复杂度分析”“消融实验”或“附录”等。
+
+若借用分类评价中常见的精确率、召回率与调和平均思想，还可将模板识别出的“规范元素”与人工标准进行对照。设 $TP$、$FP$、$FN$ 分别表示正确匹配、不必要元素与遗漏元素的数量，则有
+\begin{align}
+    \mathrm{Precision} &= \frac{TP}{TP+FP}, \\
+    \mathrm{Recall} &= \frac{TP}{TP+FN}, \\
+    F_1 &= \frac{2\cdot \mathrm{Precision}\cdot \mathrm{Recall}}
+    {\mathrm{Precision}+\mathrm{Recall}}.
+\end{align}
+尽管本文并非真正的分类任务，上述写法依然能够作为“模板规范性评价”的一种借喻形式，用于展示结果分析中常见的指标组织方法。
+
+最后，将前述质量得分 $Q$ 与写作效率 $\eta$ 结合，可定义综合效能指标
+\begin{equation}
+    \Phi = \kappa_1 Q + \kappa_2 \eta - \kappa_3 \frac{W_f+W_v}{W},
+\end{equation}
+其中 $\kappa_1,\kappa_2,\kappa_3\ge 0$ 为权重系数。该指标同时兼顾了排版质量、协作效率与维护成本，因此更适合作为模板系统总体表现的汇总评价。由此可见，在保持文档结构清晰的同时引入更完整的数学表达，能够显著提升论文在形式上的学术性与技术感。
+
+\section{讨论}
+尽管该模板具有较好的通用性，但在实际使用中仍需根据场景进行调整。例如，若面向毕业论文，则通常需要进一步加入封面、原创性声明、致谢、目录样式和学校指定参考文献格式；若面向会议或期刊投稿，则应严格切换到目标模板，以满足版面限制与匿名审稿要求。
+
+此外，不同研究方向对论文结构的偏好也存在差异。以计算机和密码学为例，通常更强调形式化定义、定理证明、安全模型、复杂度分析和实验验证；而在综述型写作中，则更强调文献分类、比较维度与发展趋势梳理。因此，模板只是基础框架，真正高质量的论文仍依赖于研究问题本身的价值与论证质量。
+
+\section{结论与未来工作}
+本文给出了一套适用于中文理工科论文写作的通用 \LaTeX{} 模板，并围绕结构设计、数学排版、算法描述、图表组织和参考文献管理等方面提供了较为完整的示例。结果表明，模板化写作能够有效降低排版成本，提高论文的一致性与可维护性，对于初学者和需要频繁修改文档的研究者具有较好的实用价值。
+
+未来工作可以从以下两个方向展开：一是进一步针对特定学校或学院的毕业论文规范进行深度定制；二是结合 BibTeX/Biber、Git 与 Overleaf 协作机制，构建更完善的科研写作工作流。
+
+% ==================== 参考文献 ====================
+\begin{thebibliography}{99}
+
+\bibitem{lamport}
+Leslie Lamport.
+\newblock \textit{\LaTeX: A Document Preparation System}.
+\newblock Addison-Wesley, 2nd edition, 1994.
+
+\bibitem{knuth}
+Donald E. Knuth.
+\newblock \textit{The \TeX book}.
+\newblock Addison-Wesley, 1986.
+
+\bibitem{mittelbach}
+Frank Mittelbach, Michel Goossens, Johannes Braams, David Carlisle, and Chris Rowley.
+\newblock \textit{The \LaTeX{} Companion}.
+\newblock Addison-Wesley, 2nd edition, 2004.
+
+\bibitem{overleaf}
+Overleaf Documentation.
+\newblock \textit{Learn \LaTeX{} and Overleaf Guides}.
+\newblock Available online.
+
+\end{thebibliography}
+
+\end{document}
