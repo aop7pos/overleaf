@@ -1,6 +1,6 @@
 ﻿\documentclass[12pt,a4paper]{ctexart}
 
-% ==================== 页面与基础设置1 ====================
+% ==================== 页面与基础设置 ====================
 \usepackage[margin=1in]{geometry}
 \usepackage{setspace}
 \usepackage{indentfirst}
@@ -47,15 +47,16 @@
 % ==================== 页眉页脚 ====================
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[C]{论文标题示例}
+\fancyhead[C]{后量子密码技术框架与典型方案分析}
 \fancyfoot[C]{\thepage}
 
 % ==================== 自定义命令 ====================
 \newcommand{\keywords}[1]{\par\noindent\textbf{关键词：} #1}
 \newcommand{\engkeywords}[1]{\par\noindent\textbf{Keywords:} #1}
+\newcommand{\adv}{\mathrm{Adv}}
 
 % ==================== 标题信息 ====================
-\title{\heiti 论文标题示例：一种面向学术写作的规范化论文模板}
+\title{\heiti 后量子密码技术框架与典型方案分析}
 \author{作者姓名\\[0.5em]
 \small 某某大学~~某某学院}
 \date{\today}
@@ -66,367 +67,247 @@
 
 % ==================== 中文摘要 ====================
 \begin{abstract}
-随着科研写作与学术交流需求的不断增长，规范、清晰且易于维护的论文排版模板对于提升写作效率和论文质量具有重要意义。针对初学者在论文写作中经常面临的结构混乱、公式排版不规范、图表引用不统一以及参考文献组织困难等问题，本文设计并实现了一套适用于中文学术论文写作的 \LaTeX{} 模板。该模板在整体结构上覆盖摘要、引言、相关工作、方法设计、理论分析、实验结果、结论与参考文献等核心组成部分，并对数学公式、定理环境、算法描述、表格与图片插入等常见写作场景进行了统一封装。实验性使用结果表明，该模板能够有效降低论文初稿阶段的格式调整成本，提高文档的一致性与可维护性。本文的模板尤其适用于计算机科学、信息安全、密码学及其他理工科方向的课程论文、学术报告与毕业论文写作。
+随着量子计算研究的快速发展，基于大整数分解与离散对数困难问题的经典公钥密码体制面临潜在威胁。后量子密码旨在构造即使在量子计算环境下仍具备可接受安全性的密码算法体系，已经成为密码学与网络安全领域的重要研究方向。本文以综述型技术论文的方式，对后量子密码的研究背景、基本安全模型、主要技术路线、典型标准化方案以及工程部署问题进行系统梳理。文中重点介绍格密码、码密码、多变量密码、哈希签名与同源密码等主要分支，并围绕 ML-KEM 与 ML-DSA 两类代表性方案分析其设计思想、核心流程和应用价值。在此基础上，本文进一步从安全依据、通信开销、密钥规模、实现复杂度和迁移可行性等角度对不同路线进行比较，讨论后量子密码从理论研究走向产业落地所面临的关键挑战。本文可作为后量子密码课程论文、基础综述与技术报告的写作框架。
 \end{abstract}
 
-\keywords{\LaTeX{}；学术论文；排版模板；Overleaf；科研写作}
+\keywords{后量子密码；格密码；ML-KEM；ML-DSA；标准化；量子安全}
 
 % ==================== 英文摘要 ====================
 \vspace{1.5em}
 \begin{center}
     {\bfseries\large Abstract}
 \end{center}
-With the increasing demand for academic writing and scholarly communication, a standardized, clear, and maintainable manuscript template plays an important role in improving both writing efficiency and paper quality. To address common issues faced by beginners, such as disorganized structure, inconsistent equation formatting, irregular figure and table references, and difficulties in bibliography management, this paper presents a \LaTeX{} template designed for Chinese academic writing. The template covers essential components of a formal paper, including abstract, introduction, related work, methodology, theoretical analysis, experimental results, conclusion, and references. It also provides unified support for common writing scenarios such as mathematical equations, theorem environments, algorithm descriptions, table formatting, and figure insertion. Experimental use shows that the template can significantly reduce formatting overhead during early drafting and improve consistency and maintainability. It is particularly suitable for course papers, technical reports, and thesis writing in computer science, information security, cryptography, and other engineering-related disciplines.
+With the rapid progress of quantum computing, classical public-key cryptosystems based on integer factorization and discrete logarithms face potential security threats. Post-quantum cryptography aims to construct cryptographic schemes that remain secure against adversaries equipped with quantum capabilities, and has become a major research direction in cryptography and cybersecurity. This paper presents a survey-style technical framework for post-quantum cryptography, covering its research motivation, security notions, major design families, representative standardized schemes, and deployment challenges. We focus on lattice-based, code-based, multivariate, hash-based, and isogeny-based approaches, with particular attention to ML-KEM and ML-DSA as representative standardized schemes. We further compare different approaches from the perspectives of security assumptions, communication overhead, key and signature sizes, implementation complexity, and deployment feasibility. The resulting manuscript serves as a practical foundation for course papers, introductory surveys, and technical reports on post-quantum cryptography.
 
-\engkeywords{\LaTeX{}, academic writing, manuscript template, Overleaf, research paper}
+\engkeywords{post-quantum cryptography, lattice-based cryptography, ML-KEM, ML-DSA, standardization, quantum security}
 
 \tableofcontents
 \newpage
 
 % ==================== 正文 ====================
 \section{引言}
-学术论文不仅是研究成果的载体，也是研究思路、技术路线与实验结论的系统表达形式。一篇高质量论文通常需要在内容完整性、逻辑严谨性与版面规范性三个层面同时达到较高标准。然而，对于初次接触学术写作的学生而言，排版往往会成为影响写作效率的重要因素。例如，公式编号不连续、图表样式不统一、章节层次不清晰、参考文献格式混乱等问题，在传统文字处理软件中较为常见。
+公钥密码是现代网络安全体系的基础组成部分，广泛应用于密钥交换、数字签名、身份认证与安全通信等场景。当前工程上大量使用的 RSA、Diffie--Hellman 和椭圆曲线密码体制，主要依赖大整数分解问题或离散对数问题的计算困难性。然而，量子计算模型下的 Shor 算法表明，一旦大规模容错量子计算机实现，上述经典公钥体制的安全性将受到根本性冲击。
 
-相比之下，\LaTeX{} 具有公式排版能力强、文档结构清晰、交叉引用方便以及参考文献管理规范等优势，因此在计算机科学、数学、物理学、信息安全与密码学等领域得到了广泛应用。特别是在多人协作与长期维护场景下，基于 Overleaf 的在线协同写作方式进一步降低了环境配置门槛，使得研究者能够将更多精力放在内容本身而非格式调整之上。
+在这一背景下，后量子密码（Post-Quantum Cryptography, PQC）成为国际密码研究的热点。后量子密码并不要求密码系统运行在量子设备上，而是强调即使攻击者拥有量子计算能力，现有算法仍能在合理参数下维持安全性。与量子密钥分发等依赖特殊物理设备的方案不同，后量子密码更强调在现有数字基础设施上的软件与硬件可部署性，因此在协议升级与产业迁移方面具有现实可行性。
 
-本文围绕“如何构建一套适合中文科研写作的通用论文模板”这一问题展开，主要贡献如下：
+本文的目标并非给出某一具体算法的实现细节，而是构建一篇适合基础研究与课程论文写作的后量子密码综述型技术框架。本文主要贡献如下：
 \begin{itemize}[leftmargin=2em]
-    \item 提供一套结构完整、可直接编译的中文论文模板；
-    \item 统一数学公式、定理环境、算法、图表和参考文献的书写方式；
-    \item 给出一个适用于课程论文、综述、技术报告和毕业论文初稿的通用框架。
+    \item 梳理后量子密码的研究背景、基本概念与安全模型；
+    \item 归纳后量子密码的主要技术路线及其代表性方案；
+    \item 围绕 ML-KEM 与 ML-DSA 分析标准化方案的结构特点；
+    \item 从安全、性能与部署角度比较不同后量子密码路线的优缺点。
 \end{itemize}
 
-\section{相关工作}
-现有的学术写作模板大致可以分为三类。第一类是高校官方模板，通常面向学位论文写作，强调格式规范性与提交一致性；第二类是期刊或会议模板，主要服务于论文投稿，关注版面风格与审稿要求；第三类是个人或课题组维护的通用模板，兼顾灵活性与复用性。
+\section{相关工作与标准化背景}
+后量子密码的研究在过去二十余年中逐步形成了较为清晰的技术谱系。按困难问题来源划分，主流路线主要包括格密码、码密码、多变量密码、哈希签名以及同源密码等。不同路线分别基于不同的数学难题，因此在安全假设、密钥尺寸、计算开销和实现复杂度方面呈现出明显差异。
 
-从写作工具角度来看，传统文字处理软件具有上手快、操作直观等优点，适合轻量级文档写作；而 \LaTeX{} 在结构化写作、数学公式排版、交叉引用与参考文献管理方面优势明显，因而更适合技术性较强的学术文档。在实际使用中，Overleaf 作为在线 \LaTeX{} 平台，进一步提升了跨设备访问、版本管理和多人协作的便利性。
+从国际标准化进程来看，美国国家标准与技术研究院（NIST）持续推动后量子密码标准化工作，使得研究重点逐步从纯理论安全性扩展到可实现性、互操作性和工程部署能力。当前，格密码路线因其在安全性、效率与通用性之间具备较好平衡，已经成为后量子公钥加密与数字签名标准化的核心方向。与此同时，Classic McEliece、SPHINCS+ 等方案也因其独特安全优势在长期研究中保持重要地位。
 
-尽管已有模板资源较多，但不少模板存在以下不足：一是结构不完整，仅提供最基础的章节框架；二是缺乏中文环境下的细节优化；三是示例不足，初学者难以快速迁移到自己的研究内容中。因此，构建一套兼顾规范性、易用性与扩展性的模板仍具有现实意义。
+已有研究通常从三类角度展开。第一类关注数学基础与安全归约，如 LWE、RLWE 与 Module-LWE 问题的困难性分析；第二类关注具体密码方案的设计，例如基于模块格的密钥封装机制与签名体制；第三类关注工程实现与协议迁移，例如 TLS、VPN、PKI 等基础设施中引入后量子算法时面临的兼容与性能问题。本文在此基础上，更强调面向基础论文写作的整体技术框架与逻辑组织。
 
-\section{问题定义与预备知识}
-\subsection{论文模板的设计目标}
-一个高质量论文模板应至少满足以下要求：
-\begin{enumerate}[leftmargin=2em]
-    \item \textbf{结构完整性}：覆盖摘要、正文、参考文献等核心模块；
-    \item \textbf{排版规范性}：公式、图表、标题和编号风格统一；
-    \item \textbf{可扩展性}：能够根据具体研究方向快速增删模块；
-    \item \textbf{可维护性}：适合长期迭代与多人协作。
-\end{enumerate}
-
-\subsection{数学环境示例}
-在计算机类论文中，数学表达通常不仅用于说明单个函数关系，还承担数据建模、目标定义与优化求解的作用。设训练样本集合为
-\begin{equation}
-    \mathcal{D}=\{(\bm{x}_i,y_i)\}_{i=1}^{n}, \qquad \bm{x}_i\in\mathbb{R}^{d},\ y_i\in\{1,\dots,C\},
-\end{equation}
-其中 $\bm{x}_i$ 表示第 $i$ 个样本的特征向量，$y_i$ 表示其类别标签。将全部样本按行堆叠，可得到批量输入矩阵
-\begin{equation}
-    \bm{X}=
-    \begin{bmatrix}
-        \bm{x}_1^{\top}\\
-        \bm{x}_2^{\top}\\
-        \vdots\\
-        \bm{x}_n^{\top}
-    \end{bmatrix}
-    \in\mathbb{R}^{n\times d}.
-\end{equation}
-
-若记参数集合为 $\theta=\{\bm{W},\bm{b}\}$，则模型预测可写为
-\begin{align}
-    \hat{y}_i &= f_{\theta}(\bm{x}_i), \\
-    \bm{z}_i &= \bm{W}\bm{x}_i+\bm{b}, \\
-    p(y_i=c\mid \bm{x}_i;\theta) &= \frac{\exp(z_{i,c})}{\sum_{j=1}^{C}\exp(z_{i,j})}.
-\end{align}
-上式给出了从线性变换到类别概率输出的基本形式，也是许多分类模型的标准写法。
-
-在此基础上，可进一步将论文中的优化目标写成经验风险最小化问题：
-\begin{equation}
-    \min_{\theta}\ \mathcal{L}(\theta)
-    =
-    \frac{1}{n}\sum_{i=1}^{n}\ell\!\left(f_{\theta}(\bm{x}_i),y_i\right)
-    + \lambda \Omega(\theta),
-\end{equation}
-其中 $\ell(\cdot,\cdot)$ 为样本损失函数，$\Omega(\theta)$ 为正则项，$\lambda\ge 0$ 为正则化系数。常见的正则项可写为
-\begin{equation}
-    \Omega(\theta)=\frac{1}{2}\|\bm{W}\|_F^2+\gamma\|\bm{b}\|_2^2.
-\end{equation}
-若进一步考虑参数规模与稳定性约束，还可写成如下受约束优化形式：
-\begin{equation}
-    \begin{aligned}
-        \min_{\theta}\quad & \mathcal{L}(\theta) \\
-        \text{s.t.}\quad & \|\bm{W}\|_{2,1}\le \tau,\qquad
-        \|\bm{b}\|_2\le \rho.
-    \end{aligned}
-\end{equation}
-该类公式既能体现模型表达能力，也能展示论文在符号系统、约束条件与多行公式排版方面的规范性。
-
-\subsection{定理环境示例}
+\section{基础概念与预备知识}
+\subsection{后量子密码的基本定义}
 \begin{definition}
-设 $\mathcal{X}$ 为一个非空集合，若映射 $d:\mathcal{X}\times\mathcal{X}\to\mathbb{R}$ 满足非负性、对称性与三角不等式，则称 $d$ 为集合 $\mathcal{X}$ 上的一个距离函数。
+后量子密码是指一类在经典计算环境中实现、但其安全性在面对具备量子计算能力的攻击者时仍被认为难以有效破坏的密码算法与协议体系。
+\end{definition}
+
+在功能上，后量子密码主要覆盖两类核心任务：一类是密钥建立与公钥加密，典型实现形式为密钥封装机制（Key Encapsulation Mechanism, KEM）；另一类是数字签名，用于消息完整性验证与身份认证。对于基础论文而言，围绕这两类功能组织全文结构，通常能够兼顾密码学理论与工程应用。
+
+\subsection{安全模型与敌手优势}
+为了描述后量子密码方案的安全性，通常需要先形式化定义敌手能力。对于密钥封装机制，常见目标是达到 IND-CPA 或 IND-CCA 安全；对于数字签名，常见目标是达到 EUF-CMA 安全。若记安全参数为 $\lambda$，敌手为 $\mathcal{A}$，则 KEM 的 IND-CCA 优势可记为
+\begin{equation}
+    \adv^{\mathrm{ind\mbox{-}cca}}_{\mathcal{A}}(\lambda)
+    =
+    \left|
+    \Pr\bigl[\mathsf{Game}^{\mathrm{ind\mbox{-}cca}}_{\mathcal{A}}(\lambda)=1\bigr]
+    - \frac{1}{2}
+    \right|.
+\end{equation}
+若对任意多项式时间量子攻击者 $\mathcal{A}$，上述优势都可忽略，则称方案在该安全模型下是安全的。类似地，签名方案的不可伪造性也可写成相应的成功概率界，并通过归约证明与底层困难问题建立联系。
+
+\subsection{格密码与 LWE 基本形式}
+在当前后量子密码研究中，格密码路线占据核心地位。其原因在于格问题既具有较强的理论基础，又能支持加密、签名、同态计算等多类密码原语。设模数为 $q$，矩阵 $\bm{A}\in\mathbb{Z}_q^{m\times n}$，秘密向量为 $\bm{s}\in\mathbb{Z}_q^n$，误差向量为 $\bm{e}\in\mathbb{Z}_q^m$，则典型的模线性关系可写为
+\begin{equation}
+    \bm{t}=\bm{A}\bm{s}+\bm{e}\pmod q.
+\end{equation}
+该表达式刻画了学习带误差问题（Learning With Errors, LWE）的核心形式，即在存在小噪声干扰的情况下，从公开样本恢复秘密向量被认为是计算上困难的。进一步地，Module-LWE 可写为
+\begin{equation}
+    (\bm{A},\bm{B}=\bm{A}\bm{S}+\bm{E}) \in R_q^{k\times k}\times R_q^{k\times \ell},
+\end{equation}
+其中 $R_q$ 为模多项式环。基于这一结构，可以构造更高效的公钥加密、KEM 与签名方案。
+
+\subsection{密码学环境示例}
+\begin{definition}
+设 $\Pi=(\mathsf{KeyGen},\mathsf{Encaps},\mathsf{Decaps})$ 为一个密钥封装机制。若算法 $\mathsf{KeyGen}$ 输出公钥与私钥对 $(pk,sk)$，$\mathsf{Encaps}(pk)$ 输出密文与会话密钥 $(c,K)$，且 $\mathsf{Decaps}(sk,c)$ 能够恢复正确的 $K$，则称 $\Pi$ 为一个正确的 KEM。
 \end{definition}
 
 \begin{theorem}
-若函数 $f(x)$ 在闭区间 $[a,b]$ 上连续，则 $f(x)$ 在该区间上一定存在最大值和最小值。
+若底层 Module-LWE 问题在给定参数下对多项式时间量子攻击者是困难的，则基于该困难问题构造的标准化格密码 KEM 在适当变换下可达到 IND-CCA 安全。
 \end{theorem}
 
 \begin{proof}
-该结论是实变函数中的经典结果，可由闭区间套性质与连续函数在紧集上的有界性直接推出。
+该类结论通常通过一系列游戏跳转完成证明，将攻击者区分真实会话密钥与随机密钥的能力逐步归约到底层 Module-LWE 实例的可区分能力。对于基础论文而言，不必展开完整证明细节，但应明确安全性来自归约关系而非经验观察。
 \end{proof}
 
-\section{方法设计}
-\subsection{总体思路}
-本文模板采用“结构先行、内容后填”的设计思路。首先定义统一的文档类、页面布局与基础宏包；其次针对数学公式、图表、算法和参考文献设计规范化写法；最后通过示例章节展示其在实际论文中的应用方式。
+\section{典型方案分析}
+\subsection{后量子密码的主要技术路线}
+从研究与部署角度看，后量子密码各路线的关注重点并不相同。格密码方案在效率与通用性上优势突出，适合构造 KEM 与签名；码密码历史悠久，安全基础较稳定，但公钥尺寸通常较大；多变量密码在签名方向曾受到关注，但部分候选方案经历了较强的密码分析；哈希签名依赖哈希函数安全性，结构简洁但状态管理或签名长度问题值得关注；同源密码具有优美数学结构，但在标准化竞赛中遭受较大挑战。
 
-若从计算机类论文的表述方式出发，可将模板支持的“方法描述”抽象为“输入表示 $\rightarrow$ 中间表征 $\rightarrow$ 输出决策 $\rightarrow$ 参数更新”的标准链条。设输入特征矩阵为 $\bm{X}\in\mathbb{R}^{n\times d}$，则隐藏层表示可定义为
-\begin{equation}
-    \bm{H}=\sigma(\bm{X}\bm{W}_1+\bm{1}\bm{b}_1^{\top}),
-\end{equation}
-其中 $\bm{W}_1\in\mathbb{R}^{d\times h}$，$\bm{b}_1\in\mathbb{R}^{h}$，$\sigma(\cdot)$ 表示逐元素非线性激活函数。进一步地，输出层可写为
-\begin{align}
-    \bm{O} &= \bm{H}\bm{W}_2+\bm{1}\bm{b}_2^{\top}, \\
-    \hat{\bm{Y}} &= \mathrm{softmax}(\bm{O}),
-\end{align}
-其中 $\hat{\bm{Y}}\in\mathbb{R}^{n\times C}$ 表示对各类别的预测概率矩阵。这样一组公式能够帮助作者将“方法设计”写得更接近标准的计算机学术论文风格。
+\subsection{ML-KEM 与密钥封装流程}
+ML-KEM 是当前后量子密钥建立方向的代表性标准化方案，其设计继承了基于 Module-LWE 的格密码思想，并通过矩阵生成、噪声采样与压缩编码等机制实现较好的安全性与效率平衡。设方案参数为 $(q,k,\eta)$，则其公钥部分通常与公开矩阵和线性变换结果相关，而私钥部分包含恢复会话密钥所需的秘密信息。
 
-\subsection{目标函数与参数更新}
-在方法实现层面，通常需要将结构表示、损失函数和优化过程串联起来。对于一个包含 $n$ 个样本的训练批次，交叉熵目标可写为
+从抽象层面看，ML-KEM 的正确性可表述为
 \begin{equation}
-    \mathcal{L}_{\mathrm{ce}}(\theta)
-    =
-    -\frac{1}{n}\sum_{i=1}^{n}\sum_{c=1}^{C}
-    y_{i,c}\log \hat{y}_{i,c},
+    \Pr\bigl[\mathsf{Decaps}(sk,c)=K \mid (c,K)\leftarrow \mathsf{Encaps}(pk)\bigr] \ge 1-\varepsilon,
 \end{equation}
-若再叠加权重衰减与结构约束，则总目标函数可写为
+其中 $\varepsilon$ 为解封装失败概率。为了保证协议层面的可靠性，设计者需要使该概率足够接近 $1$。同时，通信开销可粗略记为
 \begin{equation}
-    \mathcal{L}(\theta)
-    =
-    \mathcal{L}_{\mathrm{ce}}(\theta)
-    + \lambda\|\bm{W}_1\|_F^2
-    + \mu\|\bm{W}_2\|_F^2.
+    C_{\mathrm{kem}} = |pk| + |c| + |K|,
 \end{equation}
-为体现更完整的优化描述，还可引入拉格朗日函数
-\begin{equation}
-    \mathcal{J}(\theta,\alpha,\beta)
-    =
-    \mathcal{L}(\theta)
-    + \alpha\bigl(\|\bm{W}_1\|_F^2-\tau_1\bigr)
-    + \beta\bigl(\|\bm{W}_2\|_F^2-\tau_2\bigr),
-\end{equation}
-其中 $\alpha,\beta\ge 0$ 为拉格朗日乘子。相应地，参数更新可以写为
-\begin{equation}
-    \theta^{(t+1)}
-    =
-    \theta^{(t)}
-    -
-    \eta_t \nabla_{\theta}\mathcal{L}\!\left(\theta^{(t)}\right),
-\end{equation}
-若采用小批量随机梯度下降，则进一步可写为
-\begin{equation}
-    \nabla_{\theta}\mathcal{L}(\theta)
-    \approx
-    \frac{1}{|\mathcal{B}_t|}
-    \sum_{(\bm{x}_i,y_i)\in\mathcal{B}_t}
-    \nabla_{\theta}\ell\!\left(f_{\theta}(\bm{x}_i),y_i\right).
-\end{equation}
-上述表达能够让模板中的方法章节同时覆盖符号定义、目标构建与求解流程，避免“只有算法框图、缺少数学主线”的问题。
+该指标直接影响其在 TLS、VPN 与嵌入式设备中的部署成本。
 
-除优化公式外，模板同样支持基础数学恒等式的规范表达。作为一个补充性的排版示例，二倍角公式可写为
-\begin{align}
-    \sin(2x) &= 2\sin x\cos x, \\
-    \cos(2x) &= \cos^2 x-\sin^2 x.
-\end{align}
-该示例用于说明模板对不同类型数学表达的兼容性，并不改变本节以目标函数与参数更新为主的叙述重点。
+\subsection{ML-DSA 与后量子签名}
+ML-DSA 是后量子数字签名方向的重要代表方案，其设计同样建立在模块格问题之上，但重点转向短向量、挑战响应和拒绝采样等签名机制。与 KEM 相比，签名方案更关注签名大小、验证效率、随机性处理和侧信道防护。对工程系统而言，签名方案不仅影响通信负载，还直接影响证书体系、固件升级签名与代码签名等场景的可实施性。
 
-类似地，模板也支持对基础科学现象进行简洁说明。例如，丁达尔效应是指当一束光穿过胶体或含有微小悬浮颗粒的介质时，由于粒子对光的散射作用，光路会在侧面观察下清晰可见。这一现象常用于区分胶体与真溶液，也说明论文模板不仅适用于公式推导，还适用于概念定义与实验现象描述。
+若记签名大小为 $|\sigma|$，公钥大小为 $|pk|$，验证时间为 $T_{\mathrm{ver}}$，则可定义简单的部署代价函数
+\begin{equation}
+    \Gamma_{\mathrm{sig}} = \alpha |pk| + \beta |\sigma| + \gamma T_{\mathrm{ver}},
+\end{equation}
+其中 $\alpha,\beta,\gamma$ 为场景相关权重。该表达式虽然是抽象化指标，但有助于在综述型论文中统一讨论不同签名方案的实际使用代价。
 
-\subsection{论文写作流程}
-在实际使用中，推荐采用如下工作流程：
-\begin{enumerate}[leftmargin=2em]
-    \item 明确论文主题与章节结构；
-    \item 根据研究内容填写摘要、引言与相关工作；
-    \item 补充方法、理论分析与实验结果；
-    \item 统一调整图表编号、交叉引用与参考文献；
-    \item 最后根据学校或投稿模板进行格式微调。
-\end{enumerate}
+\subsection{其他代表性方案}
+除格密码方案外，Classic McEliece 在码密码方向具有较强长期安全声誉，但其公钥尺寸偏大；SPHINCS+ 作为无状态哈希签名方案，具有明确而稳健的安全基础，但签名与验证开销需要结合实际场景权衡。基础论文中通常不必对所有候选方案展开同等深度分析，但应明确这些路线在标准化与工程研究中的定位，以避免将后量子密码简单等同于格密码。
 
-\subsection{算法描述示例}
-下面给出一个简单的论文写作流程算法示例。
+\section{后量子密码技术路线与典型流程}
+\subsection{KEM 抽象流程}
+从协议应用角度出发，后量子 KEM 通常可抽象为“生成密钥对、封装会话密钥、解封装恢复会话密钥”三步。设参与方为发送方与接收方，则典型流程如下：
 \begin{algorithm}[H]
-\caption{学术论文写作流程}
+\caption{后量子 KEM 的基本流程}
 \begin{algorithmic}[1]
-\Require 研究主题 $T$，实验数据集 $D$
-\Ensure 完整论文文稿 $P$
-\State 确定研究问题、目标与贡献点
-\State 收集并整理相关工作
-\State 设计方法并完成理论分析
-\State 基于数据集 $D$ 开展实验并记录结果
-\State 撰写摘要、正文与结论
-\State 检查格式、语言和参考文献一致性
-\State 输出完整文稿 $P$
+\Require 安全参数 $\lambda$
+\Ensure 会话密钥 $K$
+\State 接收方执行 $(pk,sk)\leftarrow \mathsf{KeyGen}(\lambda)$
+\State 接收方向发送方发布公钥 $pk$
+\State 发送方计算 $(c,K)\leftarrow \mathsf{Encaps}(pk)$
+\State 发送方向接收方发送密文 $c$
+\State 接收方计算 $K' \leftarrow \mathsf{Decaps}(sk,c)$
+\State 若 $K'=K$，则双方建立共享会话密钥
 \end{algorithmic}
 \end{algorithm}
+该流程与经典密钥交换协议相比，在接口形式上较容易嵌入现有网络协议，因此成为后量子迁移中的关键组件。
 
-\section{理论分析}
-从文档工程的角度来看，模板化写作的核心价值在于降低格式维护成本，并使写作过程更接近“可优化系统”。设论文写作总工作量为
-\begin{equation}
-    W = W_c + W_f + W_v,
-\end{equation}
-其中 $W_c$ 表示内容撰写成本，$W_f$ 表示格式调整成本，$W_v$ 表示协作版本冲突成本。若进一步将影响因素细化为文档长度 $L$、公式数量 $m$、协作者人数 $r$ 与版本冲突率 $\xi$，则可写为
-\begin{equation}
-    W_f = \alpha_1 L + \alpha_2 m + \alpha_3 Lm,\qquad
-    W_v = \beta_1(r-1)+\beta_2 \xi L.
-\end{equation}
-其中交叉项 $\alpha_3Lm$ 刻画了“长文档中复杂公式越多，人工排版代价越高”的现象。模板化写作的收益则可定义为
-\begin{equation}
-    U = \omega_1 \Delta C + \omega_2 \Delta R + \omega_3 \Delta M,
-\end{equation}
-其中 $\Delta C,\Delta R,\Delta M$ 分别表示结构一致性、可读性与可维护性的提升幅度，$\omega_1,\omega_2,\omega_3$ 为对应权重。
+\subsection{技术路线选择逻辑}
+对于一篇基础技术论文而言，本节的作用不是给出新算法，而是说明为什么格密码会成为主线案例。其原因主要包括三点：一是底层问题具备较强理论研究基础；二是算法效率在标准化候选中表现较好；三是能够同时支持 KEM 与签名等多种功能。相比之下，其他路线往往在某一方面更突出，但整体平衡性略弱。
 
-据此，总体写作效率可重写为
+\section{理论分析与比较}
+后量子密码方案的比较不能只停留在“是否量子安全”的层面，还需要综合考虑安全依据、通信开销、密钥规模、签名或密文长度、实现复杂度以及对现有协议栈的兼容性。为此，可定义一个抽象化的综合评价指标
 \begin{equation}
-    \eta = \frac{W_c + U}{W_c + W_f + W_v},
+    \Phi = \omega_1 S + \omega_2 E - \omega_3 C - \omega_4 M,
 \end{equation}
-当 $U$ 足够大且 $W_f,W_v$ 被模板有效压缩时，系统效率将获得更明显的提升。若记模板化前后的格式成本分别为 $W_f^{(0)}$ 与 $W_f^{(1)}$，则其相对改进率为
-\begin{equation}
-    \rho_f = \frac{W_f^{(0)}-W_f^{(1)}}{W_f^{(0)}}.
-\end{equation}
+其中 $S$ 表示安全性评价，$E$ 表示运行效率，$C$ 表示通信代价，$M$ 表示实现与维护复杂度，$\omega_i$ 为权重系数。虽然该指标不对应单一标准，但适合在综述型论文中统一组织分析维度。
 
-进一步地，还可以从算法复杂度角度分析模板写作系统的维护成本。设文档中共有 $n$ 个章节单元、$m$ 个公式环境、$k$ 个交叉引用以及 $e$ 次编辑迭代，则自动编号、引用更新与结构检查的总体时间复杂度可近似表示为
+若进一步考虑协议部署中的总通信成本，可将一次握手或认证的通信量写为
 \begin{equation}
-    T(n,m,k,e)=O\bigl(n+m+k+e(m+k)\bigr),
+    B_{\mathrm{total}} = B_{\mathrm{base}} + B_{\mathrm{pq}} + B_{\mathrm{cert}},
 \end{equation}
-相应的辅助状态存储空间可写为
-\begin{equation}
-    S(n,m,k)=O(n+m+k).
-\end{equation}
-这说明模板系统在文档规模扩展时仍具有较好的可管理性。
+其中 $B_{\mathrm{pq}}$ 为引入后量子算法后新增的公钥、密文或签名字节开销。对资源受限设备而言，该项往往是实际部署时最敏感的因素之一。
 
-若考虑迭代修订过程中格式误差的收敛行为，记第 $t$ 轮修订后的规范性偏差为 $\varepsilon_t$，则在统一模板约束下可假设
-\begin{equation}
-    \varepsilon_{t+1}\le (1-\delta)\varepsilon_t + \zeta_t,\qquad 0<\delta<1,
-\end{equation}
-其中 $\delta$ 表示模板对格式误差的抑制系数，$\zeta_t$ 表示新增内容带来的扰动项。若满足 $\zeta_t\le \bar{\zeta}$，则有上界
-\begin{equation}
-    \varepsilon_t
-    \le
-    (1-\delta)^t\varepsilon_0
-    + \frac{\bar{\zeta}}{\delta}\bigl(1-(1-\delta)^t\bigr).
-\end{equation}
-该式表明，只要模板规则稳定且新增扰动有界，文档格式偏差将逐步收敛到一个较小区间，这也是模板化写作能够长期降低维护成本的重要原因。
+从安全角度看，格密码的优势在于目前尚无与 Shor 算法同级别的量子攻击可以有效破坏大参数下的相关困难问题；但这并不意味着方案可直接无条件部署。参数选择、实现细节、采样偏差、解封装失败处理与侧信道防护都会影响实际安全性。因此，后量子密码的“安全”应被理解为“在当前已知数学与实现模型下的可信安全”，而非绝对安全。
 
-\section{实验与结果}
-\subsection{实验设置}
-为了验证模板的可用性，本文从结构完整性、排版规范性、可读性与可维护性四个维度进行观察性评价。实验环境采用 Overleaf 在线编译平台与本地 \LaTeX{} 编辑器相结合的方式，重点考察以下问题：
-\begin{itemize}[leftmargin=2em]
-    \item 是否能够稳定支持中文排版；
-    \item 是否便于公式、图表和算法的统一管理；
-    \item 是否适合多人协作与后期内容迭代。
-\end{itemize}
+\section{实验与结果展示}
+\subsection{对比指标设计}
+由于本文定位为基础综述型技术论文，不以具体代码实验为核心，因此实验部分采用表格和指标分析的方式展示不同路线的特征。设比较维度为安全基础、密钥规模、密文或签名大小、实现效率与适用场景，则可构造评价向量
+\begin{equation}
+    \bm{v}_i =
+    \bigl[
+    v_{i,1},
+    v_{i,2},
+    v_{i,3},
+    v_{i,4},
+    v_{i,5}
+    \bigr]^{\top},
+\end{equation}
+其中 $\bm{v}_i$ 表示第 $i$ 类后量子方案的多维特征描述。进一步地，可通过加权方式得到总体评分
+\begin{equation}
+    Q_i = \sum_{j=1}^{5} w_j v_{i,j}, \qquad \sum_{j=1}^{5} w_j = 1.
+\end{equation}
+该类公式有助于为后续实验章节预留统一的分析接口。
 
-为使实验评价更具“计算机论文”风格，可进一步定义多指标评分向量
-\begin{equation}
-    \bm{s}=
-    \bigl[s_{\mathrm{str}},\ s_{\mathrm{fmt}},\ s_{\mathrm{read}},\ s_{\mathrm{maint}}\bigr]^{\top},
-\end{equation}
-其中四个分量分别表示结构完整性、格式一致性、可读性和可维护性得分。综合评分函数定义为
-\begin{equation}
-    Q = \bm{w}^{\top}\bm{s}
-    = \sum_{j=1}^{4} w_j s_j,\qquad
-    \sum_{j=1}^{4} w_j = 1,\ w_j\ge 0.
-\end{equation}
-若进一步对不同工具在多个任务上的表现进行归一化，可写为
-\begin{equation}
-    \tilde{s}_{i,j}
-    =
-    \frac{s_{i,j}-\min\limits_{1\le p\le M}s_{p,j}}
-         {\max\limits_{1\le p\le M}s_{p,j}-\min\limits_{1\le p\le M}s_{p,j}+\epsilon},
-\end{equation}
-其中 $M$ 表示候选写作方案数，$\epsilon>0$ 用于避免分母为零。通过这些公式，实验部分便不再只是文字描述，而是具有了清晰的指标定义与评价框架。
-
-\subsection{表格示例}
-表~\ref{tab:comparison} 给出了不同写作方式在若干指标上的对比示例。
+\subsection{方案比较表}
+表~\ref{tab:pqc-comparison} 给出了几类典型后量子密码路线的定性比较结果。
 \begin{table}[H]
     \centering
-    \caption{不同写作方式对比示例}
-    \label{tab:comparison}
-    \begin{tabular}{cccc}
+    \caption{典型后量子密码路线对比}
+    \label{tab:pqc-comparison}
+    \begin{tabular}{p{2.8cm}p{2.5cm}p{2.2cm}p{2.2cm}p{2.4cm}}
         \toprule
-        写作方式 & 公式支持 & 协同能力 & 格式一致性\\
+        技术路线 & 安全基础 & 密钥/签名规模 & 计算效率 & 典型说明 \\
         \midrule
-        传统文字处理软件 & 一般 & 较强 & 一般\\
-        本地 \LaTeX{} & 很强 & 一般 & 很强 \\
-        Overleaf + \LaTeX{} & 很强 & 很强 & 很强 \\
+        格密码 & LWE / Module-LWE 等 & 中等 & 较高 & 当前标准化主流，兼顾 KEM 与签名 \\
+        码密码 & 译码困难问题 & 公钥较大 & 较高 & 长期研究充分，Classic McEliece 代表性强 \\
+        多变量密码 & 多变量方程求解困难 & 中等 & 依方案而异 & 曾受关注，但部分方案分析压力较大 \\
+        哈希签名 & 哈希函数安全性 & 签名较大 & 中等 & 安全基础直接，SPHINCS+ 代表性较强 \\
+        同源密码 & 椭圆曲线同源问题 & 较小到中等 & 较低 & 数学结构优美，但工程挑战较大 \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-从表中可以看出，基于 \LaTeX{} 的写作方式在公式排版与格式一致性方面具有明显优势；而 Overleaf 在此基础上进一步增强了协同写作能力，更适合课程论文、小组项目与研究生阶段的长期文档维护。
-
-\subsection{图片示例}
-图~\ref{fig:framework} 展示了模板化论文写作的一般流程框架。
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.65\textwidth]{example-image}
-    \caption{模板化论文写作流程示意图}
-    \label{fig:framework}
-\end{figure}
-
-结合图~\ref{fig:framework} 可知，一个规范模板不仅能够作为排版工具，也能够在一定程度上起到“写作路线图”的作用。作者可以围绕既定章节依次填充内容，从而降低空白文档带来的写作压力。
-
 \subsection{结果分析}
-综合实验观察结果，本文模板在以下三个方面表现较好：
+从表~\ref{tab:pqc-comparison} 可以看出，格密码路线之所以在标准化中占据核心地位，主要是因为其在理论安全性、算法效率与功能多样性之间取得了较好平衡。特别是在 KEM 与签名两个方向上，格密码方案都表现出较强工程可行性。
 
-第一，文档结构完整，能够满足多数课程论文和技术报告的基本需求。
-
-第二，数学公式、图表、算法与定理环境均已统一配置，适合技术性较强的写作任务。
-
-第三，模板具有较好的可扩展性，用户可以根据具体研究方向进一步增加章节，如“安全性分析”“复杂度分析”“消融实验”或“附录”等。
-
-若借用分类评价中常见的精确率、召回率与调和平均思想，还可将模板识别出的“规范元素”与人工标准进行对照。设 $TP$、$FP$、$FN$ 分别表示正确匹配、不必要元素与遗漏元素的数量，则有
-\begin{align}
-    \mathrm{Precision} &= \frac{TP}{TP+FP}, \\
-    \mathrm{Recall} &= \frac{TP}{TP+FN}, \\
-    F_1 &= \frac{2\cdot \mathrm{Precision}\cdot \mathrm{Recall}}
-    {\mathrm{Precision}+\mathrm{Recall}}.
-\end{align}
-尽管本文并非真正的分类任务，上述写法依然能够作为“模板规范性评价”的一种借喻形式，用于展示结果分析中常见的指标组织方法。
-
-最后，将前述质量得分 $Q$ 与写作效率 $\eta$ 结合，可定义综合效能指标
-\begin{equation}
-    \Phi = \kappa_1 Q + \kappa_2 \eta - \kappa_3 \frac{W_f+W_v}{W},
-\end{equation}
-其中 $\kappa_1,\kappa_2,\kappa_3\ge 0$ 为权重系数。该指标同时兼顾了排版质量、协作效率与维护成本，因此更适合作为模板系统总体表现的汇总评价。由此可见，在保持文档结构清晰的同时引入更完整的数学表达，能够显著提升论文在形式上的学术性与技术感。
+然而，主流并不等于没有问题。首先，后量子算法的公钥、密文或签名通常比传统 ECC 方案更大，这会带来协议握手流量上升和证书体积增加的问题。其次，噪声采样、常数时间实现与故障注入防护等实现问题，会显著影响工程安全性。再次，后量子密码迁移并非孤立替换算法，而是需要与证书体系、硬件加速、协议协商机制和长期兼容策略协同推进。
 
 \section{讨论}
-尽管该模板具有较好的通用性，但在实际使用中仍需根据场景进行调整。例如，若面向毕业论文，则通常需要进一步加入封面、原创性声明、致谢、目录样式和学校指定参考文献格式；若面向会议或期刊投稿，则应严格切换到目标模板，以满足版面限制与匿名审稿要求。
+从长期发展趋势看，后量子密码的研究已经从“寻找替代 RSA/ECC 的理论候选方案”转向“构建可部署、可验证、可迁移的完整密码生态”。这一转变意味着研究者不仅要关注底层困难问题和归约证明，还要关注协议适配、标准一致性、密钥管理、硬件实现与侧信道安全等系统层问题。
 
-此外，不同研究方向对论文结构的偏好也存在差异。以计算机和密码学为例，通常更强调形式化定义、定理证明、安全模型、复杂度分析和实验验证；而在综述型写作中，则更强调文献分类、比较维度与发展趋势梳理。因此，模板只是基础框架，真正高质量的论文仍依赖于研究问题本身的价值与论证质量。
+在工程迁移上，混合部署是一个现实可行的过渡策略。例如，在握手阶段同时结合经典密钥交换与后量子 KEM，有助于在保持兼容性的同时降低单一路线风险。与此同时，如何在性能敏感系统中控制通信膨胀、如何在受限设备中实现高质量随机采样，以及如何建立长期可信的参数更新机制，仍然是后量子密码落地中的关键议题。
 
 \section{结论与未来工作}
-本文给出了一套适用于中文理工科论文写作的通用 \LaTeX{} 模板，并围绕结构设计、数学排版、算法描述、图表组织和参考文献管理等方面提供了较为完整的示例。结果表明，模板化写作能够有效降低排版成本，提高论文的一致性与可维护性，对于初学者和需要频繁修改文档的研究者具有较好的实用价值。
+本文围绕后量子密码构建了一套适用于基础研究与课程论文写作的综述型技术框架。文章首先说明了量子计算对经典公钥密码体制的潜在威胁，随后介绍了后量子密码的基本定义、安全模型与主要数学基础。在此基础上，本文重点分析了 ML-KEM 与 ML-DSA 等代表性标准化方案，并从安全性、效率、通信代价与工程迁移角度比较了不同技术路线的特点。
 
-未来工作可以从以下两个方向展开：一是进一步针对特定学校或学院的毕业论文规范进行深度定制；二是结合 BibTeX/Biber、Git 与 Overleaf 协作机制，构建更完善的科研写作工作流。
+未来工作可以从三个方向进一步展开。第一，围绕具体方案补充更细致的安全证明、参数设计与实现细节；第二，结合实验平台给出更具体的性能测试与协议集成结果；第三，继续关注后量子密码标准化、混合部署与长期密钥基础设施升级等前沿问题。对于初学者而言，本文框架既可作为后量子密码基础论文的起点，也可作为后续深入研究单一算法路线的组织模板。
 
 % ==================== 参考文献 ====================
 \begin{thebibliography}{99}
 
-\bibitem{lamport}
-Leslie Lamport.
-\newblock \textit{\LaTeX: A Document Preparation System}.
-\newblock Addison-Wesley, 2nd edition, 1994.
+\bibitem{nist-pqc}
+NIST.
+\newblock \textit{Post-Quantum Cryptography Project}.
+\newblock Available online: \url{https://www.nist.gov/pqcrypto}.
 
-\bibitem{knuth}
-Donald E. Knuth.
-\newblock \textit{The \TeX book}.
-\newblock Addison-Wesley, 1986.
+\bibitem{fips203}
+NIST.
+\newblock \textit{Module-Lattice-Based Key-Encapsulation Mechanism Standard (ML-KEM)}.
+\newblock FIPS 203, 2024.
 
-\bibitem{mittelbach}
-Frank Mittelbach, Michel Goossens, Johannes Braams, David Carlisle, and Chris Rowley.
-\newblock \textit{The \LaTeX{} Companion}.
-\newblock Addison-Wesley, 2nd edition, 2004.
+\bibitem{fips204}
+NIST.
+\newblock \textit{Module-Lattice-Based Digital Signature Standard (ML-DSA)}.
+\newblock FIPS 204, 2024.
 
-\bibitem{overleaf}
-Overleaf Documentation.
-\newblock \textit{Learn \LaTeX{} and Overleaf Guides}.
+\bibitem{regev}
+Oded Regev.
+\newblock On lattices, learning with errors, random linear codes, and cryptography.
+\newblock \textit{Journal of the ACM}, 56(6), 2009.
+
+\bibitem{kyber}
+Joppe Bos, L\'eo Ducas, Eike Kiltz, Tancr\`ede Lepoint, Vadim Lyubashevsky, John M. Schanck, Peter Schwabe, Gregor Seiler, and Damien Stehl\'e.
+\newblock CRYSTALS-Kyber: A CCA-secure module-lattice-based KEM.
+\newblock In \textit{2018 IEEE European Symposium on Security and Privacy}, 2018.
+
+\bibitem{dilithium}
+L\'eo Ducas, Eike Kiltz, Tancr\`ede Lepoint, Vadim Lyubashevsky, Peter Schwabe, Gregor Seiler, and Damien Stehl\'e.
+\newblock CRYSTALS-Dilithium: A lattice-based digital signature scheme.
+\newblock \textit{IACR Transactions on Cryptographic Hardware and Embedded Systems}, 2018(1):238--268, 2018.
+
+\bibitem{sphincs}
+Daniel J. Bernstein, Andreas H\"ulsing, Stefan K\"olbl, Ruben Niederhagen, Joost Rijneveld, and Peter Schwabe.
+\newblock SPHINCS+: Submission to the NIST Post-Quantum Project.
+\newblock Available online.
+
+\bibitem{mceliece}
+Classic McEliece Team.
+\newblock \textit{Classic McEliece: Conservative Code-Based Cryptography}.
 \newblock Available online.
 
 \end{thebibliography}
