@@ -8,7 +8,7 @@
 \contentsline {subsection}{\numberline {4.1}总体思路}{5}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}目标函数与参数更新}{5}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}论文写作流程}{6}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}算法描述示例}{6}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.4}算法描述示例}{7}{subsection.4.4}%
 \contentsline {section}{\numberline {5}理论分析}{7}{section.5}%
 \contentsline {section}{\numberline {6}实验与结果}{8}{section.6}%
 \contentsline {subsection}{\numberline {6.1}实验设置}{8}{subsection.6.1}%

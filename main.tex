@@ -1,6 +1,6 @@
 ﻿\documentclass[12pt,a4paper]{ctexart}
 
-% ==================== 页面与基础设置 ====================
+% ==================== 页面与基础设置1 ====================
 \usepackage[margin=1in]{geometry}
 \usepackage{setspace}
 \usepackage{indentfirst}
@@ -228,6 +228,13 @@ With the increasing demand for academic writing and scholarly communication, a s
     \nabla_{\theta}\ell\!\left(f_{\theta}(\bm{x}_i),y_i\right).
 \end{equation}
 上述表达能够让模板中的方法章节同时覆盖符号定义、目标构建与求解流程，避免“只有算法框图、缺少数学主线”的问题。
+
+除优化公式外，模板同样支持基础数学恒等式的规范表达。作为一个补充性的排版示例，二倍角公式可写为
+\begin{align}
+    \sin(2x) &= 2\sin x\cos x, \\
+    \cos(2x) &= \cos^2 x-\sin^2 x.
+\end{align}
+该示例用于说明模板对不同类型数学表达的兼容性，并不改变本节以目标函数与参数更新为主的叙述重点。
 
 \subsection{论文写作流程}
 在实际使用中，推荐采用如下工作流程：
